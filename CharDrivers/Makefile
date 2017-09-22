@@ -24,7 +24,8 @@ clean:
 
 else
     # called from kernel build system: just declare what our modules are
-    obj-m := charDriver.o
+    
+	obj-m := charDriver.o device_static.o device_dynamic.o uppercase.o nextchar.o
 endif
 
 

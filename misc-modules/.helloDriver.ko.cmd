@@ -1,1 +1,0 @@
-cmd_/home/vvverma/Desktop/DeviceDriver/misc-modules/helloDriver.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/vvverma/Desktop/DeviceDriver/misc-modules/helloDriver.ko /home/vvverma/Desktop/DeviceDriver/misc-modules/helloDriver.o /home/vvverma/Desktop/DeviceDriver/misc-modules/helloDriver.mod.o ;  true
