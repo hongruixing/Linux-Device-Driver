@@ -8,7 +8,7 @@
 #include"magic.h"
 #define major 242
 #define minor 1
-#define BUFFSIZE 100
+#define BUFFSIZE 12
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Vishal Verma");
 MODULE_DESCRIPTION("Single Character Driver");
@@ -37,25 +37,33 @@ int datto_release(struct inode *ip,struct file *fmychar)
 
 ssize_t datto_read(struct file* filptr, char __user *buffer, size_t count, loff_t *offset){
 int result;
-	
- result = copy_to_user(buffer,kernelbuff,count);
+
+/*
+ printk(KERN_INFO "Read()\n");
+    if (copy_to_user(buffer,&data, 1) != 0)
+        return -EFAULT;
+    else
+        return count;
+*/	
+ result = copy_to_user(buffer,&data,count);
     if(result>=0)
 	{
 	printk(KERN_INFO"Return value of copy to user  is %d \n",result);
-	//printk(KERN_INFO"successfully data sent to user space %s of size %d\n ",kernelbuffer,(int)count);
-	return count;
+	printk(KERN_INFO"successfully data sent to user space %c of size %d\n ",data,(int)count);
+	result=count;
 	}
 	else
 	{
 	printk(KERN_ERR"failed to read................");
 	return -EFAULT;
 	}
+return result;
 }
 
 //-------------------------------------------------------------------------------------------------------
 static long  datto_ioctl(struct file *filp,unsigned int cmd, unsigned long arg)
 {
-int retval,i ;
+int retval;//,i ;
 switch(cmd)
 {
 
@@ -63,11 +71,6 @@ switch(cmd)
 case IOC_WR:
 	retval=	get_user(data,(char *)arg);
 	printk(KERN_ALERT"Writing Data..........%c\n",data);
-	i= 0;
-	while(i< BUFFSIZE){
-	kernelbuff[i] = data;
-	i++;}
-	break;
 default:
 	return -ENOTTY;
 }
