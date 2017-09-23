@@ -16,14 +16,13 @@ if [ "$?" != 0 ]; then
 fi
 
 
+if [ $3 = 1 ]; then
 sudo rmmod $1
-if [ "$?" != 0 ]; then
-	echo"[Error] rmmod failed" 1>&2
-	exit 1
-fi
 echo 
 echo "======Module removed $1 removed successfully============="
 echo 
+fi
+
 
 sudo insmod $1.ko
 if [ "$?" != 0 ]; then
