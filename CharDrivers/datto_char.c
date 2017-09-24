@@ -8,77 +8,95 @@
 #include"magic.h"
 #define major 242
 #define minor 1
-#define BUFFSIZE 12
+#define BUFFSIZE 50
+
+
+//=========================================================
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Vishal Verma");
 MODULE_DESCRIPTION("Single Character Driver");
 
+//========================================================
 char kernelbuff[BUFFSIZE];
+
 //=========================================================
 struct cdev *my_cdev;
 dev_t dev;
-char data;
-char cache=1;
-int flag = 0;
+char data = -1;
 //=========================================================
 int datto_open(struct inode *ip,struct file *fmychar)
 {
-	printk(KERN_ALERT"i am in driver open");
+	printk(KERN_ALERT"Driver open");
 	return 0;
 }
 //-----------------------------------------------------------------------------------------------------
 int datto_release(struct inode *ip,struct file *fmychar)
 {
-	printk(KERN_ALERT"i am in driver release ");
+	printk(KERN_ALERT"Driver released");
 	return 0;
 }
 
-//----------------------------------------------------------------------------------------------------
 
+
+
+
+//----------------------------------------------------------------------------------------------------
 ssize_t datto_read(struct file* filptr, char __user *buffer, size_t count, loff_t *offset){
 int result;
 
-/*
- printk(KERN_INFO "Read()\n");
-    if (copy_to_user(buffer,&data, 1) != 0)
-        return -EFAULT;
-    else
-        return count;
-*/	
- result = copy_to_user(buffer,&data,count);
+ if (data == -1)
+	return -EINVAL;
+	
+ result = copy_to_user(buffer,kernelbuff,count);
     if(result>=0)
 	{
 	printk(KERN_INFO"Return value of copy to user  is %d \n",result);
-	printk(KERN_INFO"successfully data sent to user space %c of size %d\n ",data,(int)count);
-	result=count;
+	printk(KERN_INFO"successfully data sent to user space %c of size %d\n ",data,(int)count-result);
+	
+	return result;
 	}
 	else
 	{
 	printk(KERN_ERR"failed to read................");
 	return -EFAULT;
 	}
-return result;
 }
+
+
+//============================================================
+void copy_to_buffer(char tchar){
+	int i =0;
+
+	memset(kernelbuff,0,BUFFSIZE);
+	while(i<BUFFSIZE){
+		kernelbuff[i] = tchar++;
+		i++;
+	}
+	printk(KERN_INFO "Copy Successful");
+}
+
+
 
 //-------------------------------------------------------------------------------------------------------
 static long  datto_ioctl(struct file *filp,unsigned int cmd, unsigned long arg)
 {
-int retval;//,i ;
+int retval;
 switch(cmd)
 {
-
-
 case IOC_WR:
 	retval=	get_user(data,(char *)arg);
 	printk(KERN_ALERT"Writing Data..........%c\n",data);
+	copy_to_buffer(data);
+	break;	
 default:
 	return -ENOTTY;
 }
 
 return retval;
-
 }
 
+
+//============================================================================================
 
 struct file_operations fops={
 	.owner=THIS_MODULE,
@@ -121,7 +139,7 @@ static void  __exit datto_exit(void)
 
 	cdev_del(my_cdev);
 	printk(KERN_INFO"Cdev structure deleted from the kernel");
-	printk(KERN_INFO "REMOVING MODULE");		
+	printk(KERN_INFO "REMOVING THIS MODULE");		
           
 }
 //--------------------------------------------------------------------------------------------------

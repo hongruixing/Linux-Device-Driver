@@ -5,6 +5,10 @@ if [ $# -eq 0 ]
 	exit 1
 fi
 
+if [ $4 = 1 ]; then
+sudo mknod /dev/datto_char c 242 1
+fi
+
 fpath="$(pwd)/UserApp/$2.c"
 outpath="$(pwd)/UserApp/$2.o"
 sudo dmesg -c > /dev/null

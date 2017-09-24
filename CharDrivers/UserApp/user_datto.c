@@ -8,36 +8,28 @@
 #include<signal.h>
 #include"magic.h"
 
-#define BUFFSIZE 12
-#define error(x)  x<0? perror("\nFailed\n"):printf("\nSuccess\n") 
-
-void signal_callback_handler(int signum){
-
-   printf("Control C triggered signal %d\n",signum);
-   // Cleanup and close up stuff here
-
-   // Terminate program
-   exit(signum);
-}
+#define BUFFSIZE 50
 
 
 int main()
 {
-int fp,i=0;
-char c = 'B',a;
+int fd;
+char c = '0';
 int ret;
-char buff;
-fp = open("/dev/datto_char",O_RDWR);
- signal(SIGINT, signal_callback_handler);
-//---------------------------------------	
-	error(fp);
-//---------------------------------------		
-	ioctl(fp,IOC_WR,&c);
-	while((read(fp,&buff,sizeof(buff))==sizeof(buff)) ){
-	printf("%c",buff);
+char read_buff[BUFFSIZE];
+fd = open("/dev/datto_char",O_RDWR);
+ 	if(read(fd,&read_buff,sizeof(read_buff))<0){
+		perror("read error");	
 	}
-	printf("\n");
-	close(fp);	
+	 if(ioctl(fd,IOC_WR,&c)){
+		perror("IOCTL error");
+	}
+	
+	if(read(fd,&read_buff,sizeof(read_buff))){
+		perror("read error");
+	}
+	printf("%s\n",read_buff);
+	close(fd);	
 
 	return 0;
 }
