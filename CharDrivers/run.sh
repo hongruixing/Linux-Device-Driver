@@ -1,4 +1,4 @@
-#! /bin/sh
+	#! /bin/sh
 if [ $# -eq 0 ]
   then
     echo "$0 <name of module> <name of the userapp C Code>"
