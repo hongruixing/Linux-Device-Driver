@@ -6,10 +6,6 @@
 //  Author - Vishal Verma , Syracuse University, vvverma@syr.edu   //
 /////////////////////////////////////////////////////////////////////
 
-
-
-
-
 #include<linux/init.h>
 #include<linux/module.h>
 #include<linux/cdev.h>
@@ -34,7 +30,7 @@ static long  datto_ioctl(struct file *filp,unsigned int cmd,
 void copy_to_buffer(char tchar);
 static int __init datto_init(void);
 static void  __exit datto_exit(void);
-				 
+
 //==============Required Structures for character driver implementation=========
 
 struct cdev *my_cdev;
@@ -56,7 +52,7 @@ char data = -1; // -1 is the senitel value
 
 
 
-//=============== Functionalities of Character Driver ========================== 
+//=============== Functionalities of Character Driver ==========================
 
 //-------------Called for open system call--------------------------------------
 int datto_open(struct inode *ip,struct file *filptr){
@@ -76,13 +72,13 @@ int datto_release(struct inode *ip,struct file *filptr){
 //-------------Called for read system call------------------------------------
 ssize_t datto_read(struct file* filptr, char __user *buffer,
 				 size_t count, loff_t *offset){
-				 
-				
+
+
 int result;
 //check for content initialized in data
  if (data == -1)
 	return -EINVAL;
-	
+
  result = copy_to_user(buffer,kernelbuff,count);
     if(result>=0){
 	printk(KERN_INFO"Return value of copy to user  is %d \n",result);
@@ -120,7 +116,7 @@ case IOC_WR:
 	retval=get_user(data,(char *)arg);
 	printk(KERN_ALERT"Data from the userspace%c\n",data);
 	copy_to_buffer(data);
-	break;	
+	break;
 
 default:
 	return -ENOTTY;
@@ -135,11 +131,11 @@ static int __init datto_init(void){
 
 	dev = MKDEV(major,minor); //Allocating Device number
 	my_cdev = cdev_alloc(); //Registering character driver
-	my_cdev->ops = &fops; 
+	my_cdev->ops = &fops;
 	my_cdev->owner = THIS_MODULE;
 
 	cdev_init(my_cdev, &fops);//Initializing driver
-	
+
 	 // notifying the kernel
 	if(cdev_add(my_cdev,dev,1));
 		printk(KERN_ERR"Failed to register the char device\n");
@@ -155,11 +151,9 @@ static void  __exit datto_exit(void){
 
 	cdev_del(my_cdev); //free up cdev structure
 	printk(KERN_INFO"Cdev structure deleted from the kernel");
-	printk(KERN_INFO "REMOVING THIS MODULE");		
-          
+	printk(KERN_INFO "REMOVING THIS MODULE");
+
 }
-
-
 
 //-----------Macro to init and exit module--------------------------------------
 module_init(datto_init);
@@ -169,4 +163,3 @@ module_exit(datto_exit);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Vishal Verma");
 MODULE_DESCRIPTION("Single Character Driver");
-

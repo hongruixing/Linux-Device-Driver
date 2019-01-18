@@ -2,11 +2,11 @@
 //  magic.h - header file to provide with macro of ioctl()       //
 //                                   				 //
 //  version - 1.0	                                         //
-//  Author - Vishal Verma , Syracuse University, vvverma@syr.edu //
+//  Author - Vishal Verma , Syracuse University           //
 ///////////////////////////////////////////////////////////////////
 
 /*================================================================
-Header for-							
+Header for-
 ------------	user_datto.c
 ------------	datto_char.c
 ================================================================*/

@@ -11,10 +11,10 @@ dev_t dev;
 
 static int __init devicestatic(void){
 	//statiscally assigning device number
+   int ret;
 	 dev = MKDEV(242,0);
-
 	//to obtain the device number
-	int ret = register_chrdev_region(dev, 1,"devicenumber");
+	ret = register_chrdev_region(dev, 1,"devicenumber");
 	if(ret <0)
 		printk(KERN_ERR"FAILED TO ALLOCATE THE REQUESTED DEVICE NUMBER\n");
 
@@ -31,10 +31,6 @@ static void __exit exit_devicestatic(void){
 	printk(KERN_INFO "REMOVING MODULE");
 
 }
-
-
-
-
 
 module_init(devicestatic);
 module_exit(exit_devicestatic);
