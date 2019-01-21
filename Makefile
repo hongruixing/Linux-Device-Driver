@@ -1,4 +1,4 @@
-SUBDIRS =  misc-modules CharDrivers USB
+SUBDIRS =  misc-modules char USB
 
 all: subdirs
 

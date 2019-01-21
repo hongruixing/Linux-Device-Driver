@@ -1,0 +1,86 @@
+#! /bin/bash
+#VBoxHeadless --startvm "ubuntu"
+if [[ -z "${IP_ADDR}" ]]; then
+  echo "Please set Virtual Machine IP_ADDR to env variable"
+  echo "export IP_ADDR="xxx.xxx.xxx.xxx""
+  exit 1
+else
+  ip_addr=${IP_ADDR}
+fi
+
+if [[ -z "${PASSWD}" ]]; then
+  echo "Please set Virtual Machine login PASSWD to env variable"
+  echo "export PASSWD=\"abcedfg\""
+  exit 1
+else
+  passwd=${PASSWD}
+fi
+
+vm_addr=root@$ip_addr
+
+vm-run(){
+  sshpass -p $passwd ssh $vm_addr $1
+}
+
+while true; do
+echo "c-compile r-run d-clean u-rename p-print q-quit m- mknod"
+read -a input -r -p ""
+echo ${input[0]}
+
+if [ -z "$driver" ]; then
+  driver=${input[1]}
+fi
+
+if [ -z "$project" ]; then
+  project=${input[2]}
+  ko_project="$project""-main.ko"
+  rm_file=${ko_project: :-3}
+fi
+
+echo "Running : $driver $project"
+case  ${input[0]}  in
+  c)
+            vm-run "mkdir -p /root/compile-module || true" && \
+            echo "Make Directory" && \
+            vm-run "rm -rf /root/compile-module/$project" && \
+            echo "Cleaning up" && \
+            sshpass -p $passwd scp -r $driver/$project $vm_addr:/root/compile-module && \
+            echo "Installing Project Folders" && \
+            vm-run "make -C /root/compile-module/$project" && \
+            echo "Build Finished success" && \
+            vm-run "ls -a /root/compile-module/$project" && \
+            echo "Compile Success. Press r to run"
+     		    ;;
+  r)
+            vm-run "dmesg -c >/dev/null"
+            vm-run "insmod /root/compile-module/$project/$ko_project"
+            vm-run "dmesg"
+            ;;
+
+  d)
+            vm-run "dmesg -c >/dev/null"
+            vm-run "rmmod $rm_file || true"
+            vm-run "make -C /root/compile-module/$project clean"
+            vm-run "rm -rf /root/compile-module/$project"
+            ;;
+  m)
+            if [ "$project" == "data-struct" ];then
+             vm-run "mknod /dev/link_list c 243 0"
+            fi
+     		    ;;
+  u)
+            unset project
+            unset driver
+            ;;
+
+  p)
+            vm-run "dmesg"
+            ;;
+
+  q)
+            break
+    		    ;;
+  *)
+
+  esac
+done

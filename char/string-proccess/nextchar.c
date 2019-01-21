@@ -71,54 +71,9 @@ result = copy_from_user(&temp, buffer,count);
 	}
 }
 
-
-
 //release
 int release_nextchar(struct inode* inodeptr, struct file* filptr){
 	printk(KERN_INFO "Device Closed Successfully" );
 
 return 0;
 }
-
-
-// file operations to give functionality to the driver
-static struct file_operations fops = {
-	.open = open_nextchar,
-	.release = release_nextchar,
-	.read = read_nextchar,
-	.write = write_nextchar,
-};
-
-
-// regstration of the charater device
-static int __init nextchar(void){
-
-	int ret;
-	dev = MKDEV(major,minor);
-
-	my_cdev = cdev_alloc();
-	my_cdev->ops = &fops;
-	my_cdev->owner = THIS_MODULE;
-	cdev_init(my_cdev, &fops);
-
-	ret =cdev_add(my_cdev,dev,1);
-
-	if(ret<0)
-		printk(KERN_ERR"FAILED TO register the char device\n");
-
-	printk(KERN_INFO"Character deivce successfully registered in the kernel");
-	printk(KERN_INFO "REGISTERED MAJOR NUMBER %d\n", MAJOR(dev));
-	printk(KERN_INFO "REGISTERED MINOR NUMBER %d\n",MINOR(dev));
-return 0;
-}
-
-// unregistering the charcter driver
-static void __exit exit_nextchar(void){
-	cdev_del(my_cdev);
-	printk(KERN_INFO"Cdev structure deleted from the kernel");
-	printk(KERN_INFO "REMOVING MODULE");
-
-}
-
-module_init(nextchar);
-module_exit(exit_nextchar);
