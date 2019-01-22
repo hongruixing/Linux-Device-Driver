@@ -1,10 +1,18 @@
-SUBDIRS =  misc-modules char USB
+SUBDIRS = block char misc
 
 all: subdirs
 
 subdirs:
-	for n in $(SUBDIRS); do $(MAKE) -C $$n || exit 1; done
+	@	for n in $(SUBDIRS); do \
+	 		for k in `ls -d $$n/*`; do \
+	  		$(MAKE) -C $$k || exit 1; \
+			done; \
+		done
 
 
 clean:
-	for n in $(SUBDIRS); do $(MAKE) -C $$n clean; done
+	@	for n in $(SUBDIRS); do \
+	 		for k in `ls -d $$n/*`; do \
+	  		$(MAKE) -C $$k clean || exit 1; \
+		 	done; \
+		done

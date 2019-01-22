@@ -24,7 +24,5 @@ clean:
 
 else
     # called from kernel build system: just declare what our modules are
-    obj-m := fw_loader.o helloDriver.o
+    obj-m := fw_loader.o
 endif
-
-

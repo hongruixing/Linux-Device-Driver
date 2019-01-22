@@ -66,6 +66,10 @@ case  ${input[0]}  in
   m)
             if [ "$project" == "data-struct" ];then
              vm-run "mknod /dev/link_list c 243 0"
+            elif [ "$project" == "string-process" ];then
+             vm-run "mknod /dev/uppercase c 243 0"
+             vm-run "mknod /dev/nextchar c 241 0"
+             vm-run "mknod /dev/finddup c 242 0"
             fi
      		    ;;
   u)
