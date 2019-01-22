@@ -1,42 +1,8 @@
-#include<linux/fs.h>
-#include<linux/init.h>
-#include<linux/module.h>
-#include<linux/types.h> // for dev_t
-#include<linux/cdev.h> // cdev struct
-#include<linux/uaccess.h>
-#include<linux/ctype.h>
+#include "string-process.h"
 
-
-#define major 242
-#define minor 0
-#define DEVICENAME "uppercase"
 #define BUFFERSIZE 21
-
-
-MODULE_AUTHOR("Vishal Verma");
-MODULE_DESCRIPTION("Registering and un registering the device numbers statically");
-MODULE_LICENSE("GPL");
-
 char kernelbuffer[BUFFERSIZE];
 static int actual_count=0;
-dev_t  dev;
-//struct cdev initailization;
-struct cdev *my_cdev;
-
-
-//open
-int open_uppercase(struct inode* inodeptr , struct file* filptr){
-
-	unsigned int num;
-	num = iminor(inodeptr);
-	printk(KERN_ALERT"I AM IN OPEN %d \n",num );
-
-
-	printk(KERN_INFO"Device opened Successfully");
-
-	return 0;
-}
-
 
 //read
 ssize_t read_uppercase(struct file* filptr, char __user *buffer, size_t count, loff_t *offset){
@@ -53,7 +19,6 @@ ssize_t read_uppercase(struct file* filptr, char __user *buffer, size_t count, l
 		return -EFAULT;
 	}
 }
-
 
 //write
 ssize_t write_uppercase(struct file* filptr, const char __user *buffer, size_t count, loff_t *offset){
@@ -88,9 +53,18 @@ ssize_t write_uppercase(struct file* filptr, const char __user *buffer, size_t c
 	}
 }
 
+//open
+int open_uppercase(struct inode* inodeptr , struct file* filptr){
+	unsigned int num;
+	num = iminor(inodeptr);
+	printk(KERN_ALERT"I AM IN OPEN %d \n",num );
+	printk(KERN_INFO"Device opened Successfully");
+
+	return 0;
+}
+
 //release
 int release_uppercase(struct inode* inodeptr, struct file* filptr){
 	printk(KERN_INFO "Device Closed Successfully" );
-
 	return 0;
 }

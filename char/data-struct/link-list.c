@@ -83,7 +83,7 @@ static int copy_link_list_to_buff(char *data_frame, int size){
 static void print_link_list(void){
 	struct node *temp;
 	list_for_each_entry(temp, &link_list, list) {
-		printk(KERN_INFO "data ->: %c ",temp->data
+		printk(KERN_INFO "data ->: %c ",temp->data);
 	}
 }
 

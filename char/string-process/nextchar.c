@@ -1,37 +1,7 @@
-#include<linux/fs.h>
-#include<linux/init.h>
-#include<linux/module.h>
-#include<linux/types.h> // for dev_t
-#include<linux/cdev.h> // cdev struct
-#include<asm/uaccess.h>
+#include "string-process.h"
 
-
-#define major 242
-#define minor 1
-#define DEVICENAME "nextchar"
-
-
-MODULE_AUTHOR("Vishal Verma");
-MODULE_DESCRIPTION("Registering and un registering the device numbers statically");
-MODULE_LICENSE("GPL");
 char temp;
 static int actual_count=0;
-dev_t  dev;
-//struct cdev initailization;
-struct cdev *my_cdev;
-
-
-//open
-int open_nextchar(struct inode* inodeptr , struct file* filptr){
-
-unsigned int num;
-num = iminor(inodeptr);
-printk(KERN_ALERT"I AM IN OPEN %d \n",num );
-
-	printk(KERN_INFO"Device opened Successfully");
-
-return 0;
-}
 
 
 //read
@@ -49,7 +19,6 @@ int result;
 	return -EFAULT;
 	}
 }
-
 
 //write
 ssize_t write_nextchar(struct file* filptr, const char __user *buffer, size_t count, loff_t *offset){
@@ -69,6 +38,18 @@ result = copy_from_user(&temp, buffer,count);
 	printk(KERN_ERR"failed to read");
 	return -EFAULT;
 	}
+}
+
+//open
+int open_nextchar(struct inode* inodeptr , struct file* filptr){
+
+unsigned int num;
+num = iminor(inodeptr);
+printk(KERN_ALERT"I AM IN OPEN %d \n",num );
+
+	printk(KERN_INFO"Device opened Successfully");
+
+return 0;
 }
 
 //release
