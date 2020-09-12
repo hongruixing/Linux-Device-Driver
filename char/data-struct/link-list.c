@@ -52,9 +52,10 @@ static int delete_node_link_list( char* data){
       }
 		}
 
-	if(notfound)
+	if(notfound){
 			printk(KERN_INFO "Not Found");
 			return FAILURE;
+    }
 	return SUCCESS;
 }
 
